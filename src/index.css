@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* Minimal base CSS when using Tailwind via CDN */
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #111827; /* gray-900 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans,
+    Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
 :root {
   --eco-cyan: rgb(0, 191, 195);
   --eco-green: rgb(126, 217, 87);

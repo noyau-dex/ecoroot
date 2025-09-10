@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import ChallengeCard from '../components/ChallengeCard.jsx'
 import { useChallenges } from '../contexts/ChallengesContext.jsx'
 
@@ -17,6 +17,7 @@ function useToasts() {
 }
 
 function ChallengesPage() {
+  const navigate = useNavigate()
   const { challenges, fetchChallenges, currentUser, completeChallenge, joinChallenge } = useChallenges()
   const [category, setCategory] = useState('All')
   const [difficulty, setDifficulty] = useState('All')
@@ -99,6 +100,16 @@ function ChallengesPage() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-4">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
+          aria-label="Go back"
+        >
+          ← Go back
+        </button>
+      </div>
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Eco Challenges</h1>
         <p className="mt-1 text-sm text-gray-600">Join challenges, track your progress, and earn credits for eco-friendly actions.</p>

@@ -5,8 +5,8 @@ function App() {
   return (
     <>
       {/* Other routes */}
-      {/* <ChallengesPage /> */}
-      <Leaderboard />
+      <ChallengesPage />
+      {/* <Leaderboard /> */}
     </>
   );
 }

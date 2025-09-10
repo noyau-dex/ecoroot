@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 export default function HomePage() {
   return (
     <div className="min-h-screen">
@@ -17,18 +19,18 @@ export default function HomePage() {
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-white hover:opacity-80 font-medium underline">
+            <Link to="/" className="text-white hover:opacity-80 font-medium underline">
               Home
-            </a>
+            </Link>
             <a href="#" className="text-white hover:opacity-80 font-medium">
               Games
             </a>
             <a href="#" className="text-white hover:opacity-80 font-medium">
               Challenges
             </a>
-            <a href="#" className="text-white hover:opacity-80 font-medium">
+            <Link to="/leaderboard" className="text-white hover:opacity-80 font-medium">
               Leaderboard
-            </a>
+            </Link>
             <a href="#" className="text-white hover:opacity-80 font-medium">
               Rewards
             </a>

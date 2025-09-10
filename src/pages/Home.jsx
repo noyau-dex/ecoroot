@@ -25,9 +25,9 @@ export default function HomePage() {
             <a href="#" className="text-white hover:opacity-80 font-medium">
               Games
             </a>
-            <a href="#" className="text-white hover:opacity-80 font-medium">
+            <Link to="/challenges" className="text-white hover:opacity-80 font-medium">
               Challenges
-            </a>
+            </Link>
             <Link to="/leaderboard" className="text-white hover:opacity-80 font-medium">
               Leaderboard
             </Link>

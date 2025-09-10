@@ -1,5 +1,6 @@
 // src/pages/Leaderboard.jsx
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 // Leaderboard data with 6 ranks
 const leaderboardData = [
@@ -28,9 +29,16 @@ const getImageByRank = (rank) => {
 export default function Leaderboard() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-200 to-green-100 p-6">
-      <h1 className="text-4xl font-bold text-center text-green-800 mb-6">
-        🌿 Leaderboard 🌿
-      </h1>
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <Link to="/" className="text-green-800 hover:text-green-600 font-medium">
+            ← Back to Home
+          </Link>
+          <h1 className="text-4xl font-bold text-center text-green-800">
+            🌿 Leaderboard 🌿
+          </h1>
+          <div></div>
+        </div>
 
       <div className="max-w-3xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
         <table className="w-full text-center">
@@ -72,10 +80,11 @@ export default function Leaderboard() {
         </table>
       </div>
 
-      <div className="text-center mt-6">
-        <p className="text-green-800 font-semibold">
-          🌱 Keep playing, learning, and acting to climb the leaderboard!
-        </p>
+        <div className="text-center mt-6">
+          <p className="text-green-800 font-semibold">
+            🌱 Keep playing, learning, and acting to climb the leaderboard!
+          </p>
+        </div>
       </div>
     </div>
   );

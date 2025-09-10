@@ -2,6 +2,10 @@ import { Routes, Route } from "react-router-dom";
 import Leaderboard from "./pages/Leaderboard";
 import HomePage from "./pages/Home.jsx";
 import ChallengePage from "./pages/ChallengesPage.jsx";
+import GameSection from "./pages/GameSection";
+import Game from "./pages/Game";
+import WasteQuiz from "./pages/WasteQuiz";
+
 
 function App() {
   return (
@@ -10,6 +14,9 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/challenges" element={<ChallengePage />} />
+        <Route path="/games" element={<GameSection />} />
+        <Route path="/game-quiz" element={<Game />} />
+        <Route path="/waste-quiz" element={<WasteQuiz />} />
       </Routes>
     </>
   );

@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+:root {
+  --eco-cyan: rgb(0, 191, 195);
+  --eco-green: rgb(126, 217, 87);
+  --eco-brown: rgb(123, 58, 31);
+}
+
+.bg-eco-cyan { background-color: var(--eco-cyan); }
+.bg-eco-green { background-color: var(--eco-green); }
+.bg-eco-brown { background-color: var(--eco-brown); }
+
+.text-eco-cyan { color: var(--eco-cyan); }
+.text-eco-green { color: var(--eco-green); }
+.text-eco-brown { color: var(--eco-brown); }
+
+.bg-eco-cyan-soft { background-color: rgb(0, 191, 195); }
+.bg-eco-green-soft { background-color: rgba(126, 217, 87, 0.12); }
+.bg-eco-brown-soft { background-color: rgba(123, 58, 31, 0.12); }
+
+/* Extra utility for requested highlight green */
+.text-eco-green-strong { color: rgb(59, 139, 65); }
+.bg-eco-green-strong { background-color: rgb(59, 139, 65); }
+
+/* Cream inner surface for Quick Tip */
+.bg-eco-cream { background-color: rgb(244, 240, 216); }

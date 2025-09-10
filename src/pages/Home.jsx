@@ -165,10 +165,10 @@ export default function HomePage() {
             <Link to="/" className="text-white hover:opacity-80 font-medium underline">
               Home
             </Link>
-            <a href="#" className="text-white hover:opacity-80 font-medium">
+            <a href="/games" className="text-white hover:opacity-80 font-medium">
               Games
             </a>
-            <a href="#" className="text-white hover:opacity-80 font-medium">
+            <a href="/challenges" className="text-white hover:opacity-80 font-medium">
               Challenges
             </a>
             <Link to="/leaderboard" className="text-white hover:opacity-80 font-medium">

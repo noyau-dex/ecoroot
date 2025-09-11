@@ -18,7 +18,7 @@ function useToasts() {
 
 function ChallengesPage() {
   const navigate = useNavigate()
-  const { challenges, fetchChallenges, currentUser, completeChallenge, joinChallenge } = useChallenges()
+  const { challenges, fetchChallenges, currentUser, joinChallenge, completeChallenge } = useChallenges()
   const [category, setCategory] = useState('All')
   const [difficulty, setDifficulty] = useState('All')
   const [sort, setSort] = useState('Newest')
@@ -66,30 +66,14 @@ function ChallengesPage() {
     }))
   }
 
-  const handleMarkComplete = async (challenge) => {
-    const curr = getUserProgress(challenge.id, challenge.durationDays)
-    const nextDays = Math.min(challenge.durationDays, (curr.progressDays || 0) + 1)
-    const isFinal = nextDays >= challenge.durationDays
-    if (isFinal) {
-      const beforeCredits = currentUser.credits
-      await completeChallenge(challenge.id)
-      const earned = challenge.points
-      const gained = Math.max(0, earned)
-      if (gained > 0 && currentUser.credits + gained >= beforeCredits) {
-        push(`+${gained} credits earned!`)
-      } else {
-        push('Challenge completed!')
-      }
-    }
-    setProgressById((prev) => ({
-      ...prev,
-      [challenge.id]: { joined: true, progressDays: nextDays, completed: isFinal || curr.completed },
-    }))
-  }
-
+  // NEW: Proof upload flow is the only completion method
   const handleUploadProof = async (challenge, file) => {
     await completeChallenge(challenge.id, file)
-    push('Proof uploaded')
+    push('Proof uploaded – awaiting approval')
+    setProgressById((prev) => ({
+      ...prev,
+      [challenge.id]: { joined: true, progressDays: challenge.durationDays, completed: true },
+    }))
   }
 
   const activeItems = useMemo(() => {
@@ -112,10 +96,12 @@ function ChallengesPage() {
       </div>
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Eco Challenges</h1>
-        <p className="mt-1 text-sm text-gray-600">Join challenges, track your progress, and earn credits for eco-friendly actions.</p>
+        <p className="mt-1 text-sm text-gray-600">
+          Join challenges, upload proof of completion, and earn credits for eco-friendly actions.
+        </p>
       </div>
 
-      {/* Filters: stack on mobile, grid on larger screens */}
+      {/* Filters */}
       <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">Category</label>
@@ -161,7 +147,7 @@ function ChallengesPage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="lg:col-span-8 xl:col-span-9">
-          {/* Cards responsive grid; single-column on small screens */}
+          {/* Challenge cards */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((ch) => {
               const progress = getUserProgress(ch.id, ch.durationDays)
@@ -171,7 +157,7 @@ function ChallengesPage() {
                   challenge={ch}
                   userProgress={progress}
                   onJoin={() => handleJoin(ch)}
-                  onMarkComplete={() => handleMarkComplete(ch)}
+                  // removed onMarkComplete since all require proof
                   onUploadProof={(file) => handleUploadProof(ch, file)}
                 />
               )
@@ -179,6 +165,7 @@ function ChallengesPage() {
           </div>
         </div>
 
+        {/* Sidebar */}
         <aside className={`lg:col-span-4 xl:col-span-3 ${sidebarOpen ? '' : 'hidden lg:block'}`}>
           <div className="sticky top-4 space-y-4">
             <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
@@ -205,17 +192,13 @@ function ChallengesPage() {
                 {activeItems.length === 0 && (
                   <p className="text-sm text-gray-500">No active challenges yet.</p>
                 )}
-                {activeItems.map(({ challengeId, progressDays }) => {
+                {activeItems.map(({ challengeId }) => {
                   const ch = challenges.find((c) => c.id === challengeId)
                   if (!ch) return null
-                  const pct = Math.min(100, Math.round(((progressDays || 0) / Math.max(1, ch.durationDays)) * 100))
                   return (
                     <div key={challengeId} className="rounded border border-gray-100 p-3">
                       <p className="text-sm font-medium text-gray-800">{ch.title}</p>
-                      <div className="mt-2 h-2 w-full rounded-full bg-gray-200">
-                        <div className="h-2 rounded-full bg-green-600" style={{ width: `${pct}%` }} />
-                      </div>
-                      <p className="mt-1 text-xs text-gray-500">{progressDays || 0} / {ch.durationDays} days</p>
+                      <p className="mt-1 text-xs text-gray-500">Proof required for completion</p>
                     </div>
                   )
                 })}
@@ -238,5 +221,3 @@ function ChallengesPage() {
 }
 
 export default ChallengesPage
-
-

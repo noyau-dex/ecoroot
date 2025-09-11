@@ -19,7 +19,7 @@ function Certificate({ rank, name, points, onDownloadClick }) {
         <p className="mt-1 text-sm text-gray-700">with {points} points on the EcoRoot Leaderboard</p>
         <div className="mt-6 flex items-center justify-between">
           <div className="text-left text-xs text-gray-600">
-            <p>EcoRoot Council</p>
+            <p>Ecoroot Council</p>
             <p>{new Date().toLocaleDateString()}</p>
           </div>
           <div className="text-right text-xs text-gray-600">

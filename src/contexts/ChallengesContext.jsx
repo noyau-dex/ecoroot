@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { getChallenges as apiGetChallenges, joinChallenge as apiJoinChallenge, completeChallenge as apiCompleteChallenge, redeemReward as apiRedeemReward } from '../services/mockApi.js'
+import verificationService from '../services/verificationService.js'
 
 const LOCAL_STORAGE_KEY = 'ecoroot.currentUser'
 
@@ -8,6 +9,10 @@ const defaultUser = {
   name: 'Aarav',
   credits: 120,
   completedChallenges: [],
+  role: 'student', // Default role - will be set during login
+  score: 120, // Total score for leaderboard (never decreases)
+  certificates: [], // Array of earned certificates
+  claimedRewards: [], // Array of claimed physical rewards
 }
 
 function loadUserFromStorage() {
@@ -49,7 +54,7 @@ function ChallengesProvider({ children }) {
   }, [currentUser.credits, currentUser.completedChallenges])
 
   const fetchChallenges = async () => {
-    const list = await apiGetChallenges()
+    const list = await apiGetChallenges(currentUser.role)
     setChallenges(list)
     return list
   }
@@ -60,7 +65,7 @@ function ChallengesProvider({ children }) {
     return result
   }
 
-  const completeChallenge = async (challengeId, proofFile) => {
+  const completeChallenge = async (challengeId, proofFile, proofType = 'camera') => {
     let proofUrl = null
     if (proofFile instanceof File) {
       proofUrl = URL.createObjectURL(proofFile)
@@ -68,24 +73,42 @@ function ChallengesProvider({ children }) {
       proofUrl = proofFile
     }
 
-    const result = await apiCompleteChallenge(currentUser.id, challengeId, proofUrl)
+    // Submit for verification first
+    const verificationId = await verificationService.submitForVerification(
+      challengeId, 
+      proofFile, 
+      proofType, 
+      currentUser.id
+    )
 
+    // Store challenge as pending verification
     setCurrentUser((prev) => {
       const already = (prev.completedChallenges || []).some((c) => c.challengeId === challengeId)
       const updated = {
         ...prev,
-        credits: result.newCredits,
         completedChallenges: already
           ? prev.completedChallenges
           : [
               ...prev.completedChallenges,
-              { challengeId, proofUrl: proofUrl || null, completedAt: new Date().toISOString() },
+              { 
+                challengeId, 
+                proofUrl: proofUrl || null, 
+                proofType, 
+                completedAt: new Date().toISOString(),
+                verificationId,
+                verificationStatus: 'pending'
+              },
             ],
       }
       return updated
     })
 
-    return result
+    // Return verification info instead of immediate completion
+    return {
+      verificationId,
+      status: 'pending',
+      message: 'Proof submitted for verification. Credits will be awarded after verification.'
+    }
   }
 
   const redeemReward = async (rewardId, cost) => {
@@ -94,8 +117,163 @@ function ChallengesProvider({ children }) {
     return res
   }
 
+  // Check verification status and award credits if verified
+  const checkVerificationStatus = async (verificationId) => {
+    const verification = verificationService.getVerificationStatus(verificationId)
+    
+    if (verification && verification.status !== 'pending') {
+      // Update the challenge status
+      setCurrentUser((prev) => ({
+        ...prev,
+        completedChallenges: prev.completedChallenges.map(challenge => 
+          challenge.verificationId === verificationId 
+            ? { ...challenge, verificationStatus: verification.status }
+            : challenge
+        )
+      }))
+
+      // Award credits if verified (only once)
+      if (verification.status === 'verified') {
+        const challenge = challenges.find(c => c.id === verification.challengeId)
+        if (challenge) {
+          // Check if credits were already awarded for this verification
+          const alreadyAwarded = currentUser.completedChallenges?.some(c => 
+            c.challengeId === verification.challengeId && 
+            c.verificationId === verificationId && 
+            c.verificationStatus === 'verified'
+          )
+          
+          if (!alreadyAwarded) {
+            const newCredits = currentUser.credits + challenge.points
+            const newScore = currentUser.score + challenge.points
+            setCurrentUser((prev) => ({ 
+              ...prev, 
+              credits: newCredits,
+              score: newScore 
+            }))
+            return {
+              verified: true,
+              creditsAwarded: challenge.points,
+              newCredits,
+              newScore,
+              message: verification.message
+            }
+          } else {
+            return {
+              verified: true,
+              creditsAwarded: 0,
+              newCredits: currentUser.credits,
+              message: verification.message
+            }
+          }
+        }
+      }
+      
+      return {
+        verified: false,
+        message: verification.message
+      }
+    }
+    
+    return {
+      verified: false,
+      message: 'Verification still pending...'
+    }
+  }
+
+  const login = async (userData) => {
+    const newUser = {
+      ...defaultUser,
+      ...userData,
+      role: userData.role || 'student', // Ensure role is set
+      score: userData.score || userData.credits || 0, // Preserve score
+    }
+    setCurrentUser(newUser)
+    // Refetch challenges with new role
+    await fetchChallenges()
+    return newUser
+  }
+
+  const claimCertificate = async (certificateType) => {
+    const certificateOrder = ['basic', 'advanced', 'expert']
+    const certificateCosts = {
+      'basic': 1000,
+      'advanced': 2000,
+      'expert': 3000
+    }
+    
+    const cost = certificateCosts[certificateType]
+    if (!cost || currentUser.credits < cost) {
+      return { success: false, message: 'Insufficient credits' }
+    }
+    
+    // Check if user already has this certificate
+    const hasCertificate = currentUser.certificates?.some(cert => cert.type === certificateType)
+    if (hasCertificate) {
+      return { success: false, message: 'Certificate already claimed' }
+    }
+    
+    // Check if user has reached max certificates (3)
+    if (currentUser.certificates?.length >= 3) {
+      return { success: false, message: 'Maximum certificates reached (3)' }
+    }
+    
+    // Check if user has the required previous certificates
+    const currentIndex = certificateOrder.indexOf(certificateType)
+    if (currentIndex > 0) {
+      const requiredPreviousCert = certificateOrder[currentIndex - 1]
+      const hasPreviousCert = currentUser.certificates?.some(cert => cert.type === requiredPreviousCert)
+      if (!hasPreviousCert) {
+        return { 
+          success: false, 
+          message: `You must first earn the ${requiredPreviousCert} certificate before claiming the ${certificateType} certificate` 
+        }
+      }
+    }
+    
+    const newCertificate = {
+      type: certificateType,
+      claimedAt: new Date().toISOString(),
+      cost: cost
+    }
+    
+    setCurrentUser(prev => ({
+      ...prev,
+      credits: 0, // Reset credits to 0
+      certificates: [...(prev.certificates || []), newCertificate]
+    }))
+    
+    return { success: true, message: `${certificateType} certificate claimed! Credits reset to 0.` }
+  }
+
+  const claimReward = async (rewardId, rewardCost) => {
+    if (currentUser.credits < rewardCost) {
+      return { success: false, message: 'Insufficient credits' }
+    }
+    
+    // Check if user already claimed this reward
+    const hasReward = currentUser.claimedRewards?.some(reward => reward.id === rewardId)
+    if (hasReward) {
+      return { success: false, message: 'Reward already claimed' }
+    }
+    
+    const newReward = {
+      id: rewardId,
+      claimedAt: new Date().toISOString(),
+      cost: rewardCost
+    }
+    
+    setCurrentUser(prev => ({
+      ...prev,
+      credits: prev.credits - rewardCost, // Deduct credits
+      claimedRewards: [...(prev.claimedRewards || []), newReward]
+    }))
+    
+    return { success: true, message: `Reward claimed! ${rewardCost} credits deducted.` }
+  }
+
   const value = useMemo(
-    () => ({ challenges, currentUser, fetchChallenges, joinChallenge, completeChallenge, redeemReward }),
+    () => ({ challenges, currentUser, fetchChallenges, joinChallenge, completeChallenge, redeemReward, checkVerificationStatus, login }),
     [challenges, currentUser]
   )
 

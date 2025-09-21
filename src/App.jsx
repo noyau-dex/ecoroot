@@ -6,6 +6,7 @@ import GameSection from "./pages/GameSection";
 import Game from "./pages/Game";
 import WasteQuiz from "./pages/WasteQuiz";
 import Rewards from "./pages/Rewards.jsx";
+import Auth from "./pages/Auth.jsx";
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/challenges" element={<ChallengePage />} />
         <Route path="/games" element={<GameSection />} />

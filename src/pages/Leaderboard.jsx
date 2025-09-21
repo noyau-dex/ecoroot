@@ -2,30 +2,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-
-// Leaderboard data with 6 ranks
-const leaderboardData = [
-  { rank: 1, name: "Manish Singh", points: 980, club: "Prakarti MSIT" },
-  { rank: 2, name: "Satyajeet Kumar", points: 920, club: "Prakarti MSIT" },
-  { rank: 3, name: "Yash Gupta", points: 870, club: "Prakarti MSIT" },
-  { rank: 4, name: "Nikhil", points: 830, club: "Other" },
-  { rank: 5, name: "Dhruv", points: 790, club: "Other" },
-  { rank: 6, name: "Nishika Dhankhar", points: 750, club: "Other" },
-];
-
-// function to return image based on rank
-const getImageByRank = (rank) => {
-  switch (rank) {
-    case 1:
-      return "https://img.icons8.com/emoji/96/1st-place-medal-emoji.png"; // gold
-    case 2:
-      return "https://img.icons8.com/emoji/96/2nd-place-medal-emoji.png"; // silver
-    case 3:
-      return "https://img.icons8.com/emoji/96/3rd-place-medal-emoji.png"; // bronze
-    default:
-      return "https://img.icons8.com/color/96/deciduous-tree.png"; // eco/tree icon
-  }
-};
+import { getLeaderboardData, getImageByRank } from "../services/leaderboard";
 
 export default function Leaderboard() {
   const [filterOpen, setFilterOpen] = useState(false);
@@ -33,9 +10,9 @@ export default function Leaderboard() {
   const [clubFilter, setClubFilter] = useState(null); // "Prakarti MSIT"
 
   // Apply filter
-  let filteredData = leaderboardData;
+  let filteredData = getLeaderboardData();
   if (filter === "clubs" && clubFilter === "Prakarti MSIT") {
-    filteredData = leaderboardData.filter(
+    filteredData = filteredData.filter(
       (student) => student.club === "Prakarti MSIT"
     );
   }
@@ -166,4 +143,3 @@ export default function Leaderboard() {
     </div>
   );
 }
-

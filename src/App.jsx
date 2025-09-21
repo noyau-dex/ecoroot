@@ -5,6 +5,7 @@ import ChallengePage from "./pages/ChallengesPage.jsx";
 import GameSection from "./pages/GameSection";
 import Game from "./pages/Game";
 import WasteQuiz from "./pages/WasteQuiz";
+import Rewards from "./pages/Rewards.jsx";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/games" element={<GameSection />} />
         <Route path="/game-quiz" element={<Game />} />
         <Route path="/waste-quiz" element={<WasteQuiz />} />
+        <Route path="/rewards" element={<Rewards />} />
       </Routes>
     </>
   );

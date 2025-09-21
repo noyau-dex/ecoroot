@@ -174,9 +174,9 @@ export default function HomePage() {
             <Link to="/leaderboard" className="text-white hover:opacity-80 font-medium">
               Leaderboard
             </Link>
-            <a href="#" className="text-white hover:opacity-80 font-medium">
+            <Link to="/rewards" className="text-white hover:opacity-80 font-medium">
               Rewards
-            </a>
+            </Link>
             <a href="#" className="text-white hover:opacity-80 font-medium">
               About Us
             </a>

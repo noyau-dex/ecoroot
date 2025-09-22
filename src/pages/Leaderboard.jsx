@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { getLeaderboardData, getImageByRank } from "../services/leaderboard";
-
+import Navbar from "../components/navbar"
 export default function Leaderboard() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState("all"); // "all" | "clubs"
@@ -18,6 +18,8 @@ export default function Leaderboard() {
   }
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen bg-gradient-to-b from-green-200 to-green-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header with back link + title + filter button */}
@@ -141,5 +143,6 @@ export default function Leaderboard() {
         </div>
       </div>
     </div>
+    </>
   );
 }

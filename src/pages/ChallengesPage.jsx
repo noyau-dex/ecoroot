@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ChallengeCard from '../components/ChallengeCard.jsx'
 import { useChallenges } from '../contexts/ChallengesContext.jsx'
-
+import Navbar from "../components/navbar"
 // Lightweight toast system for ephemeral notifications
 function useToasts() {
   const [toasts, setToasts] = useState([])
@@ -218,16 +218,25 @@ function ChallengesPage() {
   }, [progressById])
 
   return (
+    <>
+       <Navbar/>
+    
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-4">
-        <button
+        {/* <button
           type="button"
           onClick={() => navigate(-1)}
           className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
           aria-label="Go back"
         >
-          ← Go back
-        </button>
+          ← Go Home
+        </button> */}
+         <Link
+            to="/"
+            className="text-green-800 hover:text-green-600 font-medium"
+          >
+            ← Back to Home
+          </Link>
       </div>
       <div className="mb-6">
         <div className="flex items-center justify-between">
@@ -448,6 +457,7 @@ function ChallengesPage() {
         ))}
       </div>
     </section>
+    </>
   )
 }
 

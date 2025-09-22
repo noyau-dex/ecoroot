@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-
+import Navbar from "../components/navbar"
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true)
   const [formData, setFormData] = useState({
@@ -149,6 +149,8 @@ export default function Auth() {
   }
 
   return (
+    <>
+    <Navbar/>
     <div 
       className="min-h-screen flex items-center justify-center px-4 relative"
       style={{
@@ -158,6 +160,7 @@ export default function Auth() {
         backgroundRepeat: "no-repeat"
       }}
     >
+      
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-black/30"></div>
       <div className="max-w-md w-full relative z-10">
@@ -401,5 +404,6 @@ export default function Auth() {
         </div>
       </div>
     </div>
+    </>
   )
 }

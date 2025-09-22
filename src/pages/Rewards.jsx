@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useChallenges } from '../contexts/ChallengesContext.jsx'
-
+import Navbar from "../components/navbar"
 // Certificate Component
 function Certificate({ type, cost, onClaim, canClaim, isClaimed, userCredits, userCertificates }) {
   const certificateInfo = {
@@ -116,7 +116,7 @@ function NGOReward({ reward, onClaim, canClaim, isClaimed, userCredits }) {
           </button>
         )}
       </div>
-    </div>
+    </div> 
   )
 }
 
@@ -228,6 +228,8 @@ export default function Rewards() {
   const userClaimedRewards = currentUser.claimedRewards || []
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-50 p-6">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
@@ -390,5 +392,6 @@ export default function Rewards() {
         )}
       </div>
     </div>
+    </>
   )
 }

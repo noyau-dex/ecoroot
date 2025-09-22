@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-
+import Navbar from "../components/navbar"
 export default function GameSection() {
   const games = [
     {
@@ -18,6 +18,8 @@ export default function GameSection() {
   ];
 
   return (
+    <>
+     <Navbar/>
     <div className="min-h-screen bg-gradient-to-b from-green-200 to-green-100 p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
@@ -63,5 +65,6 @@ export default function GameSection() {
         </div>
       </div>
     </div>
+    </>
   );
 }

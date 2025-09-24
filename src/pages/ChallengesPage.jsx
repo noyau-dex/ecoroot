@@ -25,11 +25,25 @@ function ChallengesPage() {
   const [search, setSearch] = useState('')
   const [progressById, setProgressById] = useState({})
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [loading, setLoading] = useState(true)
   const { toasts, push } = useToasts()
 
-  // Initial fetch
+  // Initial fetch with lightweight loading state
   useEffect(() => {
-    if (!challenges?.length) fetchChallenges()
+    let mounted = true
+    const run = async () => {
+      try {
+        if (!challenges?.length) {
+          await fetchChallenges()
+        }
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+    run()
+    return () => {
+      mounted = false
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const categories = useMemo(() => {
@@ -332,6 +346,20 @@ function ChallengesPage() {
                 {currentUser.role === 'teacher' ? 'Student Environmental Challenges' : 'Environmental Challenges'}
               </h2>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {loading && (
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm animate-pulse">
+                      <div className="h-40 w-full rounded bg-gray-200" />
+                      <div className="mt-4 h-4 w-3/4 rounded bg-gray-200" />
+                      <div className="mt-2 h-3 w-full rounded bg-gray-200" />
+                      <div className="mt-2 h-3 w-5/6 rounded bg-gray-200" />
+                      <div className="mt-4 flex gap-2">
+                        <div className="h-6 w-20 rounded bg-gray-200" />
+                        <div className="h-6 w-24 rounded bg-gray-200" />
+                      </div>
+                    </div>
+                  ))
+                )}
                 {filtered.filter(ch => !ch.festival && !ch.teacherRole).map((ch) => {
                   const progress = getUserProgress(ch.id, ch.durationDays)
                   return (
@@ -352,7 +380,7 @@ function ChallengesPage() {
             </div>
 
             {/* Festival Challenges */}
-            {filtered.filter(ch => ch.festival).length > 0 && (
+            {!loading && filtered.filter(ch => ch.festival).length > 0 && (
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Festival Challenges</h2>
                 <p className="text-sm text-gray-600 mb-4">Special challenges available during Indian festivals</p>
@@ -378,7 +406,7 @@ function ChallengesPage() {
             )}
 
             {/* Teacher Challenges */}
-            {currentUser.role === 'teacher' && filtered.filter(ch => ch.teacherRole).length > 0 && (
+            {!loading && currentUser.role === 'teacher' && filtered.filter(ch => ch.teacherRole).length > 0 && (
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Teacher-Led Challenges</h2>
                 <p className="text-sm text-gray-600 mb-4">Assign these challenges to your students and upload proof of their participation</p>

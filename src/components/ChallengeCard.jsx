@@ -49,6 +49,7 @@ function ChallengeCard({
   const { checkVerificationStatus } = useChallenges()
   const [verificationStatus, setVerificationStatus] = useState(null)
   const [isCheckingVerification, setIsCheckingVerification] = useState(false)
+  const [showGuidelines, setShowGuidelines] = useState(false)
 
   const { id, title, description, photoGuidelines, difficulty, durationDays, points, image, festival, isActive, teacherRole, targetAudience, maxStudents } = challenge
   const { joined, progressDays, completed, lastMarkTime } = userProgress
@@ -99,13 +100,13 @@ function ChallengeCard({
 
   return (
     <article
-      className="group flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-within:-translate-y-0.5 focus-within:shadow-md"
+      className="group flex flex-col self-start overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-within:-translate-y-0.5 focus-within:shadow-md"
       tabIndex={0}
       aria-labelledby={`ch-title-${id}`}
       role="region"
     >
       {image ? (
-        <img src={image} alt="Challenge banner" className="h-40 w-full object-cover transition-transform duration-200 ease-out group-hover:scale-[1.01]" />
+        <img src={image} alt="Challenge banner" className="height-50 width-50 object-cover transition-transform duration-200 ease-out group-hover:scale-[1.01]" />
       ) : (
         <div className="h-40 w-full bg-gray-100" />
       )}
@@ -150,16 +151,33 @@ function ChallengeCard({
 
         <p className="mt-1 line-clamp-3 text-sm text-gray-600">{description}</p>
 
-        {/* Photo Guidelines */}
+        {/* Photo Guidelines (collapsible) */}
         {photoGuidelines && (
           <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
             <div className="flex items-start gap-2">
-              <svg className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              <div>
-                <p className="text-xs font-medium text-blue-800">Photo Guidelines for Verification</p>
-                <p className="text-xs text-blue-700 mt-1">{photoGuidelines}</p>
+              <div className="flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-xs font-medium text-blue-800">Photo Guidelines for Verification</p>
+                  <button
+                    type="button"
+                    onClick={() => setShowGuidelines((v) => !v)}
+                    className="text-[11px] font-medium text-blue-700 hover:text-blue-800 focus:outline-none"
+                    aria-expanded={showGuidelines}
+                    aria-controls={`guidelines-${id}`}
+                  >
+                    {showGuidelines ? 'Read less' : 'Read more'}
+                  </button>
+                </div>
+                <div
+                  id={`guidelines-${id}`}
+                  className={`mt-1 text-xs text-blue-700 overflow-hidden transition-all duration-1000 ease-in-out ${showGuidelines ? 'max-h-[1000px]' : 'max-h-10'}`}
+                  aria-hidden={!showGuidelines}
+                >
+                  <p className={`${showGuidelines ? '' : 'line-clamp-2'}`}>{photoGuidelines}</p>
+                </div>
               </div>
             </div>
           </div>

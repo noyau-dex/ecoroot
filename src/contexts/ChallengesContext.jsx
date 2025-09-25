@@ -7,7 +7,8 @@ const LOCAL_STORAGE_KEY = 'ecoroot.currentUser'
 const defaultUser = {
   id: 'u1',
   name: 'Aarav',
-  credits: 120,
+  credits: 120, // legacy field maintained for compatibility/UI where needed
+  ecoPoints: 120,
   completedChallenges: [],
   role: 'student', // Default role - will be set during login
   score: 120, // Total score for leaderboard (never decreases)
@@ -23,6 +24,8 @@ function loadUserFromStorage() {
     return {
       ...defaultUser,
       ...parsed,
+      ecoPoints: parsed.ecoPoints ?? parsed.credits ?? defaultUser.ecoPoints,
+      credits: parsed.credits ?? parsed.ecoPoints ?? defaultUser.credits,
     }
   } catch (_) {
     return defaultUser
@@ -34,7 +37,8 @@ function saveUserToStorage(user) {
     const minimal = {
       id: user.id,
       name: user.name,
-      credits: user.credits,
+      credits: user.credits, // keep writing legacy for compatibility
+      ecoPoints: user.ecoPoints,
       completedChallenges: user.completedChallenges || [],
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(minimal))
@@ -53,8 +57,9 @@ function ChallengesProvider({ children }) {
     saveUserToStorage(currentUser)
   }, [currentUser.credits, currentUser.completedChallenges])
 
-  const fetchChallenges = async () => {
-    const list = await apiGetChallenges(currentUser.role)
+  const fetchChallenges = async (roleOverride) => {
+    const roleToUse = roleOverride || currentUser.role
+    const list = await apiGetChallenges(roleToUse)
     setChallenges(list)
     return list
   }
@@ -113,7 +118,7 @@ function ChallengesProvider({ children }) {
 
   const redeemReward = async (rewardId, cost) => {
     const res = await apiRedeemReward(currentUser.id, rewardId, cost)
-    setCurrentUser((prev) => ({ ...prev, credits: res.newCredits }))
+    setCurrentUser((prev) => ({ ...prev, credits: res.newCredits ?? res.newEcoPoints, ecoPoints: res.newEcoPoints ?? res.newCredits }))
     return res
   }
 
@@ -144,17 +149,19 @@ function ChallengesProvider({ children }) {
           )
           
           if (!alreadyAwarded) {
-            const newCredits = currentUser.credits + challenge.points
+            const newCredits = (currentUser.ecoPoints ?? currentUser.credits) + challenge.points
             const newScore = currentUser.score + challenge.points
             setCurrentUser((prev) => ({ 
               ...prev, 
               credits: newCredits,
+              ecoPoints: newCredits,
               score: newScore 
             }))
             return {
               verified: true,
-              creditsAwarded: challenge.points,
-              newCredits,
+              creditsAwarded: challenge.points, // legacy name retained for UI compatibility
+              newCredits, // legacy
+              newEcoPoints: newCredits,
               newScore,
               message: verification.message
             }
@@ -163,6 +170,7 @@ function ChallengesProvider({ children }) {
               verified: true,
               creditsAwarded: 0,
               newCredits: currentUser.credits,
+              newEcoPoints: currentUser.ecoPoints ?? currentUser.credits,
               message: verification.message
             }
           }
@@ -186,11 +194,13 @@ function ChallengesProvider({ children }) {
       ...defaultUser,
       ...userData,
       role: userData.role || 'student', // Ensure role is set
-      score: userData.score || userData.credits || 0, // Preserve score
+      ecoPoints: userData.ecoPoints ?? userData.credits ?? defaultUser.ecoPoints,
+      credits: userData.credits ?? userData.ecoPoints ?? defaultUser.credits,
+      score: userData.score || userData.credits || userData.ecoPoints || 0, // Preserve score
     }
     setCurrentUser(newUser)
-    // Refetch challenges with new role
-    await fetchChallenges()
+    // Refetch challenges with the new role immediately
+    await fetchChallenges(newUser.role)
     return newUser
   }
 
@@ -203,7 +213,7 @@ function ChallengesProvider({ children }) {
     }
     
     const cost = certificateCosts[certificateType]
-    if (!cost || currentUser.credits < cost) {
+    if (!cost || (currentUser.ecoPoints ?? currentUser.credits) < cost) {
       return { success: false, message: 'Insufficient credits' }
     }
     
@@ -239,7 +249,8 @@ function ChallengesProvider({ children }) {
     
     setCurrentUser(prev => ({
       ...prev,
-      credits: 0, // Reset credits to 0
+      credits: 0, // legacy reset
+      ecoPoints: 0, // Reset Eco-Points to 0
       certificates: [...(prev.certificates || []), newCertificate]
     }))
     
@@ -247,7 +258,7 @@ function ChallengesProvider({ children }) {
   }
 
   const claimReward = async (rewardId, rewardCost) => {
-    if (currentUser.credits < rewardCost) {
+    if ((currentUser.ecoPoints ?? currentUser.credits) < rewardCost) {
       return { success: false, message: 'Insufficient credits' }
     }
     
@@ -265,7 +276,8 @@ function ChallengesProvider({ children }) {
     
     setCurrentUser(prev => ({
       ...prev,
-      credits: prev.credits - rewardCost, // Deduct credits
+      credits: prev.credits - rewardCost, // legacy
+      ecoPoints: (prev.ecoPoints ?? prev.credits) - rewardCost, // Deduct Eco-Points
       claimedRewards: [...(prev.claimedRewards || []), newReward]
     }))
     

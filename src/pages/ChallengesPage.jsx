@@ -203,7 +203,7 @@ function ChallengesPage() {
         if (currentDayProof) {
           // Submit the proof for verification
           await completeChallenge(challenge.id, currentDayProof.proofFile, challenge.proofType)
-          push('Proof submitted for verification. Credits will be awarded after verification.')
+          push('Proof submitted for verification. Eco-Points will be awarded after verification.')
         } else {
           push('All days completed! Challenge finished successfully!')
         }
@@ -257,7 +257,7 @@ function ChallengesPage() {
           <div>
             <h1 className="text-2xl font-semibold">Eco Challenges</h1>
             <p className="mt-1 text-sm text-gray-600">
-              Join challenges, upload proof of completion, and earn credits for eco-friendly actions.
+              Join challenges, upload proof of completion, and earn Eco-Points for eco-friendly actions.
             </p>
           </div>
           
@@ -268,7 +268,7 @@ function ChallengesPage() {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={() => login({ id: 'u1', name: 'Aarav', role: 'student', credits: 120, score: 120, certificates: [], claimedRewards: [] })}
+                onClick={() => login({ id: 'u1', name: 'Aarav', role: 'student', ecoPoints: 120, score: 120, certificates: [], claimedRewards: [] })}
                 className={`px-3 py-1 text-xs rounded-full ${
                   currentUser.role === 'student' 
                     ? 'bg-green-100 text-green-800' 
@@ -278,7 +278,7 @@ function ChallengesPage() {
                 Student
               </button>
               <button
-                onClick={() => login({ id: 't1', name: 'Dr. Priya', role: 'teacher', credits: 500, score: 500, certificates: [], claimedRewards: [] })}
+                onClick={() => login({ id: 't1', name: 'Dr. Priya', role: 'teacher', ecoPoints: 500, score: 500, certificates: [], claimedRewards: [] })}
                 className={`px-3 py-1 text-xs rounded-full ${
                   currentUser.role === 'teacher' 
                     ? 'bg-blue-100 text-blue-800' 
@@ -340,47 +340,48 @@ function ChallengesPage() {
         <div className="lg:col-span-8 xl:col-span-9">
           {/* Challenge cards */}
           <div className="space-y-8">
-            {/* Regular Challenges */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                {currentUser.role === 'teacher' ? 'Student Environmental Challenges' : 'Environmental Challenges'}
-              </h2>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {loading && (
-                  Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm animate-pulse">
-                      <div className="h-40 w-full rounded bg-gray-200" />
-                      <div className="mt-4 h-4 w-3/4 rounded bg-gray-200" />
-                      <div className="mt-2 h-3 w-full rounded bg-gray-200" />
-                      <div className="mt-2 h-3 w-5/6 rounded bg-gray-200" />
-                      <div className="mt-4 flex gap-2">
-                        <div className="h-6 w-20 rounded bg-gray-200" />
-                        <div className="h-6 w-24 rounded bg-gray-200" />
+            {/* Regular Challenges (students only) */}
+            {currentUser.role !== 'teacher' && (
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Environmental Challenges</h2>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  {loading && (
+                    Array.from({ length: 6 }).map((_, i) => (
+                      <div key={i} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm animate-pulse">
+                        <div className="h-40 w-full rounded bg-gray-200" />
+                        <div className="mt-4 h-4 w-3/4 rounded bg-gray-200" />
+                        <div className="mt-2 h-3 w-full rounded bg-gray-200" />
+                        <div className="mt-2 h-3 w-5/6 rounded bg-gray-200" />
+                        <div className="mt-4 flex gap-2">
+                          <div className="h-6 w-20 rounded bg-gray-200" />
+                          <div className="h-6 w-24 rounded bg-gray-200" />
+                        </div>
                       </div>
-                    </div>
-                  ))
-                )}
-                {filtered.filter(ch => !ch.festival && !ch.teacherRole).map((ch) => {
-                  const progress = getUserProgress(ch.id, ch.durationDays)
-                  return (
-                  <ChallengeCard
-                    key={ch.id}
-                    challenge={ch}
-                    userProgress={progress}
-                    onJoin={() => handleJoin(ch)}
-                    onMarkComplete={() => handleMarkComplete(ch)}
-                    onUploadProof={(file) => handleUploadProof(ch, file)}
-                    onDailyProof={(challenge, file, dayNumber) => handleDailyProof(challenge, file, dayNumber)}
-                    proofType={ch.proofType}
-                    userRole={currentUser.role}
-                  />
-                  )
-                })}
+                    ))
+                  )}
+                  {filtered.filter(ch => !ch.festival && !ch.teacherRole).map((ch) => {
+                    const progress = getUserProgress(ch.id, ch.durationDays)
+                    return (
+                    <ChallengeCard
+                      key={ch.id}
+                      challenge={ch}
+                      userProgress={progress}
+                      onJoin={() => handleJoin(ch)}
+                      onMarkComplete={() => handleMarkComplete(ch)}
+                      onUploadProof={(file) => handleUploadProof(ch, file)}
+                      onDailyProof={(challenge, file, dayNumber) => handleDailyProof(challenge, file, dayNumber)}
+                      proofType={ch.proofType}
+                      userRole={currentUser.role}
+                    />
+                    )
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Festival Challenges */}
-            {!loading && filtered.filter(ch => ch.festival).length > 0 && (
+            {/* Festival Challenges (students only) */}
+            {!loading && currentUser.role !== 'teacher' && filtered.filter(ch => ch.festival).length > 0 && (
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Festival Challenges</h2>
                 <p className="text-sm text-gray-600 mb-4">Special challenges available during Indian festivals</p>
@@ -405,7 +406,7 @@ function ChallengesPage() {
               </div>
             )}
 
-            {/* Teacher Challenges */}
+            {/* Teacher Challenges (teachers only) */}
             {!loading && currentUser.role === 'teacher' && filtered.filter(ch => ch.teacherRole).length > 0 && (
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Teacher-Led Challenges</h2>
@@ -436,9 +437,9 @@ function ChallengesPage() {
         {/* Sidebar */}
         <aside className={`lg:col-span-4 xl:col-span-3 ${sidebarOpen ? '' : 'hidden lg:block'}`}>
           <div className="sticky top-4 space-y-4">
-            <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-medium text-gray-700">Your credits</h2>
+                <h2 className="text-sm font-medium text-gray-700">Your Eco-Points</h2>
                 <button
                   type="button"
                   onClick={() => setSidebarOpen((v) => !v)}
@@ -448,7 +449,7 @@ function ChallengesPage() {
                   {sidebarOpen ? 'Hide' : 'Show'}
                 </button>
               </div>
-              <p className="mt-2 text-3xl font-semibold text-gray-900">{currentUser.credits}</p>
+              <p className="mt-2 text-3xl font-semibold text-gray-900">{currentUser.ecoPoints}</p>
               <Link to="/rewards" className="mt-4 inline-flex w-full justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600">
                 Go to Rewards Shop
               </Link>

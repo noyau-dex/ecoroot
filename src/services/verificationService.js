@@ -47,7 +47,7 @@ class VerificationService {
         status: isVerified ? 'verified' : 'rejected',
         verifiedAt: new Date().toISOString(),
         message: isVerified 
-          ? 'Proof verified successfully! Credits awarded.' 
+          ? 'Proof verified successfully! Eco-Points awarded.' 
           : 'Proof rejected. Image may be duplicate or not meet requirements.'
       }
       

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
+import Navbar from "../components/navbar"
 
 const channelsData = [
   {
@@ -70,6 +71,9 @@ export default function Community() {
   };
 
   return (
+    <>
+    
+      <Navbar/>
     <div className="max-w-7xl mx-auto px-4 py-10">
       {/* Header */}
       <header className="text-center mb-14">
@@ -176,5 +180,6 @@ export default function Community() {
         ))}
       </div>
     </div>
+    </>
   );
 }

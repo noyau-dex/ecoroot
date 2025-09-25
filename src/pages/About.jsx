@@ -1,5 +1,5 @@
 import Navbar from "../components/navbar"
-import Footer from "../components/footer"
+
 
 export default function About() {
   return (
@@ -120,7 +120,7 @@ export default function About() {
           </div>
         </section>
       </div>
-      <Footer/>
+  
     </>
   )
 }

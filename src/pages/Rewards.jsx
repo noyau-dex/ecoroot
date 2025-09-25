@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useChallenges } from '../contexts/ChallengesContext.jsx'
 import Navbar from "../components/navbar"
-import Footer from "../components/footer"
+
 // Certificate Component
 function Certificate({ type, cost, onClaim, canClaim, isClaimed, userEcoPoints, userCertificates }) {
   const certificateInfo = {
@@ -393,7 +393,7 @@ export default function Rewards() {
         )}
       </div>
     </div>
-    <Footer/>
+  
     </>
   )
 }

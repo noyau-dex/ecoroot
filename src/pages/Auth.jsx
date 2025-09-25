@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from "../components/navbar"
-import Footer from "../components/footer"
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true)
   const [formData, setFormData] = useState({
@@ -405,7 +404,7 @@ export default function Auth() {
         </div>
       </div>
     </div>
-    <Footer/>
+ 
     </>
   )
 }

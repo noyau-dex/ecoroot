@@ -203,8 +203,21 @@ function ChallengeCard({
           <ProgressBar totalDays={durationDays} progressDays={progressDays} />
         )}
 
+        {/* Local simple mode: show under-process panel when verificationPending */}
+        {userProgress.verificationPending && (
+          <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
+            <div className="flex items-center">
+              <ClockIcon className="h-5 w-5 text-yellow-600 mr-2 animate-spin" />
+              <div>
+                <p className="text-sm font-medium text-yellow-800">Verification Under Process</p>
+                <p className="text-xs text-yellow-600">Please wait while we verify your proof...</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Proof Submission for Camera-based Challenges */}
-        {joined && !completed && proofType === 'camera' && progressDays < durationDays && !userProgress.verificationId && (
+        {joined && !completed && proofType === 'camera' && progressDays < durationDays && !userProgress.verificationId && !userProgress.verificationPending && (
           <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
             <div className="flex items-center justify-between">
               <div>
@@ -321,7 +334,7 @@ function ChallengeCard({
         )}
 
         {/* Certificate Upload for Certificate-based Challenges */}
-        {joined && !completed && proofType === 'upload' && (
+        {joined && !completed && proofType === 'upload' && !userProgress.verificationPending && (
           <div className="mt-4 rounded-lg border border-purple-200 bg-purple-50 p-3">
             <div className="flex items-center justify-between">
               <div>
@@ -396,7 +409,7 @@ function ChallengeCard({
             </button>
           )}
 
-          {joined && !completed && progressDays < durationDays && proofType === 'camera' && (
+          {joined && !completed && progressDays < durationDays && proofType === 'camera' && !userProgress.verificationPending && (
             <button
               type="button"
               onClick={onMarkComplete}
@@ -472,7 +485,7 @@ function ChallengeCard({
             </div>
           )}
 
-          {joined && completed && proofType === 'camera' && (
+          {joined && completed && proofType === 'camera' && !userProgress.verificationPending && (
             <div className="w-full rounded-lg border border-gray-200 bg-green-50 p-4">
               <div className="text-center">
                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">

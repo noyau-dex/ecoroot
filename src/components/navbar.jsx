@@ -146,7 +146,7 @@ const Navbar = () => {
           <Link to="/community" className="text-white hover:opacity-80 font-medium">
             Community
           </Link>
-          <a href="#" className="text-white hover:opacity-80 font-medium">
+          <a href="/about" className="text-white hover:opacity-80 font-medium">
             About Us
           </a>
         </nav>

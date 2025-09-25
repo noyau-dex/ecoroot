@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "../components/navbar"
+import Footer from "../components/footer"
 export default function GameSection() {
   const games = [
     {
@@ -65,6 +66,7 @@ export default function GameSection() {
         </div>
       </div>
     </div>
+    <Footer/>
     </>
   );
 }

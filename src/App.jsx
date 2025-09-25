@@ -64,7 +64,8 @@ import Game from "./pages/Game";
 import WasteQuiz from "./pages/WasteQuiz";
 import Rewards from "./pages/Rewards.jsx";
 import Auth from "./pages/Auth.jsx";
-import Community from "./pages/Community.jsx"; // 👈 Import Community page
+import Community from "./pages/Community.jsx"; 
+import About from "./pages/About.jsx";
 
 function App() {
   return (
@@ -77,7 +78,8 @@ function App() {
       <Route path="/game-quiz" element={<Game />} />
       <Route path="/waste-quiz" element={<WasteQuiz />} />
       <Route path="/rewards" element={<Rewards />} />
-      <Route path="/community" element={<Community />} /> {/* 👈 New route */}
+      <Route path="/community" element={<Community />} />
+      <Route path="/about" element={<About />} />
     </Routes>
   );
 }

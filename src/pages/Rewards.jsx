@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useChallenges } from '../contexts/ChallengesContext.jsx'
 import Navbar from "../components/navbar"
 // Certificate Component
-function Certificate({ type, cost, onClaim, canClaim, isClaimed, userCredits, userCertificates }) {
+function Certificate({ type, cost, onClaim, canClaim, isClaimed, userEcoPoints, userCertificates }) {
   const certificateInfo = {
     basic: {
       title: 'Basic Environmental Certificate',
@@ -34,7 +34,7 @@ function Certificate({ type, cost, onClaim, canClaim, isClaimed, userCredits, us
   const requiredPreviousCert = requiresPrevious ? certificateOrder[currentIndex - 1] : null
   const hasPreviousCert = requiresPrevious ? userCertificates.some(cert => cert.type === requiredPreviousCert) : true
   
-  const isDisabled = !canClaim || isClaimed || userCredits < cost || !hasPreviousCert
+  const isDisabled = !canClaim || isClaimed || userEcoPoints < cost || !hasPreviousCert
 
   return (
     <div className={`relative rounded-2xl border bg-gradient-to-br ${info.color} p-6 shadow-lg`}>
@@ -44,7 +44,7 @@ function Certificate({ type, cost, onClaim, canClaim, isClaimed, userCredits, us
         <p className="mt-2 text-sm text-gray-700">{info.description}</p>
         <div className="mt-4">
           <span className="inline-flex items-center rounded-full bg-white/70 px-3 py-1 text-sm font-medium text-gray-800">
-            Cost: {cost} credits
+            Cost: {cost} Eco-Points
           </span>
         </div>
       </div>
@@ -67,8 +67,8 @@ function Certificate({ type, cost, onClaim, canClaim, isClaimed, userCredits, us
           >
             {!hasPreviousCert 
               ? `Requires ${requiredPreviousCert} certificate first`
-              : userCredits < cost 
-                ? `Need ${cost - userCredits} more credits` 
+              : userEcoPoints < cost 
+                ? `Need ${cost - userEcoPoints} more Eco-Points` 
                 : 'Claim Certificate'
             }
           </button>
@@ -79,8 +79,8 @@ function Certificate({ type, cost, onClaim, canClaim, isClaimed, userCredits, us
 }
 
 // NGO Reward Component
-function NGOReward({ reward, onClaim, canClaim, isClaimed, userCredits }) {
-  const isDisabled = !canClaim || isClaimed || userCredits < reward.cost
+function NGOReward({ reward, onClaim, canClaim, isClaimed, userEcoPoints }) {
+  const isDisabled = !canClaim || isClaimed || userEcoPoints < reward.cost
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
@@ -90,7 +90,7 @@ function NGOReward({ reward, onClaim, canClaim, isClaimed, userCredits }) {
           <h3 className="text-lg font-semibold text-gray-900">{reward.name}</h3>
           <p className="text-sm text-gray-600 mt-1">{reward.description}</p>
           <div className="mt-3 flex items-center justify-between">
-            <span className="text-sm font-medium text-green-600">{reward.cost} credits</span>
+            <span className="text-sm font-medium text-green-600">{reward.cost} Eco-Points</span>
             <span className="text-xs text-gray-500">{reward.ngo}</span>
           </div>
         </div>
@@ -112,7 +112,7 @@ function NGOReward({ reward, onClaim, canClaim, isClaimed, userCredits }) {
                 : 'bg-blue-600 text-white hover:bg-blue-700'
             }`}
           >
-            {userCredits < reward.cost ? `Need ${reward.cost - userCredits} more credits` : 'Claim Reward'}
+            {userEcoPoints < reward.cost ? `Need ${reward.cost - userEcoPoints} more Eco-Points` : 'Claim Reward'}
           </button>
         )}
       </div>
@@ -242,8 +242,8 @@ export default function Rewards() {
         {/* User Stats */}
         <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="text-sm text-gray-600">Current Credits</div>
-            <div className="text-2xl font-bold text-green-600">{currentUser.credits}</div>
+            <div className="text-sm text-gray-600">Current Eco-Points</div>
+            <div className="text-2xl font-bold text-green-600">{currentUser.ecoPoints}</div>
           </div>
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-600">Total Score</div>
@@ -271,7 +271,7 @@ export default function Rewards() {
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Environmental Certificates</h2>
           <p className="text-gray-600 mb-4">
-            Earn certificates by accumulating credits. Each certificate resets your credits to 0 but preserves your total score for leaderboard ranking.
+            Earn certificates by accumulating Eco-Points. Each certificate resets your Eco-Points to 0 but preserves your total score for leaderboard ranking.
           </p>
           
           {/* Certificate Progress */}
@@ -311,9 +311,9 @@ export default function Rewards() {
                 type={cert.type}
                 cost={cert.cost}
                 onClaim={handleClaimCertificate}
-                canClaim={currentUser.credits >= cert.cost}
+                canClaim={(currentUser.ecoPoints ?? 0) >= cert.cost}
                 isClaimed={userCertificates.some(c => c.type === cert.type)}
-                userCredits={currentUser.credits}
+                userEcoPoints={currentUser.ecoPoints ?? 0}
                 userCertificates={userCertificates}
               />
             ))}
@@ -324,7 +324,7 @@ export default function Rewards() {
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">NGO Collaboration Rewards</h2>
           <p className="text-gray-600 mb-6">
-            Exchange your credits for physical rewards from our partner NGOs. Credits are deducted but your score remains for leaderboard ranking.
+            Exchange your Eco-Points for physical rewards from our partner NGOs. Eco-Points are deducted but your score remains for leaderboard ranking.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -333,9 +333,9 @@ export default function Rewards() {
                 key={reward.id}
                 reward={reward}
                 onClaim={handleClaimReward}
-                canClaim={currentUser.credits >= reward.cost}
+                canClaim={(currentUser.ecoPoints ?? 0) >= reward.cost}
                 isClaimed={userClaimedRewards.some(r => r.id === reward.id)}
-                userCredits={currentUser.credits}
+                userEcoPoints={currentUser.ecoPoints ?? 0}
               />
             ))}
           </div>

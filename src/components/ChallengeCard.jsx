@@ -193,9 +193,9 @@ function ChallengeCard({
             </svg>
             <span>{durationDays} days</span>
           </div>
-          <div className="flex items-center gap-1" aria-label={`Earn ${points} credits`}>
+          <div className="flex items-center gap-1" aria-label={`Earn ${points} Eco-Points`}>
             <StarIcon className="h-4 w-4 text-yellow-500" aria-hidden="true" />
-            <span>{points} credits</span>
+            <span>{points} Eco-Points</span>
           </div>
         </div>
 
@@ -379,19 +379,19 @@ function ChallengeCard({
                 festival && !isActive
                   ? `Festival challenge - Available during ${festival}`
                   : teacherRole && userRole === 'teacher'
-                  ? `Assign challenge to students (Earn ${points} credits)`
+                  ? `Assign challenge to students (Earn ${points} Eco-Points)`
                   : teacherRole && userRole === 'student'
                   ? `Teacher-led challenge - Only teachers can assign`
-                  : `Join challenge to earn ${points} credits`
+                  : `Join challenge to earn ${points} Eco-Points`
               }
             >
               {festival && !isActive
                 ? `Available during ${festival}`
                 : teacherRole && userRole === 'teacher'
-                ? `Assign to Students (${points} credits)`
+                ? `Assign to Students (${points} Eco-Points)`
                 : teacherRole && userRole === 'student'
                 ? `Teacher Assignment Only`
-                : `Join (Earn ${points} credits)`
+                : `Join (Earn ${points} Eco-Points)`
               }
             </button>
           )}
@@ -441,7 +441,7 @@ function ChallengeCard({
                     <div>
                       <p className="text-sm font-medium text-green-800">Verification Complete!</p>
                       <p className="text-xs text-green-600">
-                        {verificationStatus.creditsAwarded && `+${verificationStatus.creditsAwarded} credits awarded!`}
+                        {verificationStatus.creditsAwarded && `+${verificationStatus.creditsAwarded} Eco-Points awarded!`}
                       </p>
                     </div>
                   </div>

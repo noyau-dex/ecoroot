@@ -197,7 +197,7 @@ const teacherChallenges = [
     difficulty: 'medium',
     points: 200,
     durationDays: 1,
-    image: '/challenges-images/tree.png',
+    image: '/challenges-images/campus-tree.png',
     requiresProof: true,
     proofType: 'upload',
     targetAudience: 'students',
@@ -258,12 +258,13 @@ function getAllChallenges() {
 }
 
 
-// Minimal local persistence for credits to align with ChallengesContext expectations
-const CREDITS_STORAGE_KEY = 'ecoroot.mockApi.credits'
+// Minimal local persistence for Eco-Points (backwards compatible with legacy 'credits')
+const ECO_POINTS_STORAGE_KEY = 'ecoroot.mockApi.ecoPoints'
+const LEGACY_CREDITS_STORAGE_KEY = 'ecoroot.mockApi.credits'
 
-function getStoredCredits() {
+function getStoredEcoPoints() {
   try {
-    const raw = localStorage.getItem(CREDITS_STORAGE_KEY)
+    const raw = localStorage.getItem(ECO_POINTS_STORAGE_KEY) ?? localStorage.getItem(LEGACY_CREDITS_STORAGE_KEY)
     const num = Number(raw)
     return Number.isFinite(num) ? num : 120 // default matches defaultUser in context
   } catch (_) {
@@ -271,12 +272,20 @@ function getStoredCredits() {
   }
 }
 
-function setStoredCredits(value) {
+function setStoredEcoPoints(value) {
   try {
-    localStorage.setItem(CREDITS_STORAGE_KEY, String(value))
+    localStorage.setItem(ECO_POINTS_STORAGE_KEY, String(value))
   } catch (_) {
     // ignore write errors (e.g., SSR/no storage)
   }
+}
+
+// Backwards compatibility wrappers (do not remove until full migration)
+function getStoredCredits() {
+  return getStoredEcoPoints()
+}
+function setStoredCredits(value) {
+  return setStoredEcoPoints(value)
 }
 
 // Simulate network latency
@@ -311,19 +320,21 @@ export async function joinChallenge(userId, challengeId) {
 export async function completeChallenge(userId, challengeId, proofUrl = null) {
   await delay(200)
   const challenge = challenges.find((c) => c.id === challengeId)
-  const current = getStoredCredits()
+  const current = getStoredEcoPoints()
   const earned = challenge ? challenge.points : 0
-  const newCredits = current + earned
-  setStoredCredits(newCredits)
-  return { success: true, userId, challengeId, proofUrl, earned, newCredits }
+  const newEcoPoints = current + earned
+  setStoredEcoPoints(newEcoPoints)
+  // Include legacy fields for compatibility
+  return { success: true, userId, challengeId, proofUrl, ecoPointsEarned: earned, newEcoPoints, earned, newCredits: newEcoPoints }
 }
 
 export async function redeemReward(userId, rewardId, cost) {
   await delay(150)
-  const current = getStoredCredits()
-  const newCredits = Math.max(0, current - Number(cost || 0))
-  setStoredCredits(newCredits)
-  return { success: true, userId, rewardId, cost, newCredits }
+  const current = getStoredEcoPoints()
+  const newEcoPoints = Math.max(0, current - Number(cost || 0))
+  setStoredEcoPoints(newEcoPoints)
+  // Include legacy field for compatibility
+  return { success: true, userId, rewardId, cost, newEcoPoints, newCredits: newEcoPoints }
 }
 
 export default {

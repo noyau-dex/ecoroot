@@ -146,9 +146,10 @@ const Navbar = () => {
           <Link to="/community" className="text-white hover:opacity-80 font-medium">
             Community
           </Link>
-          <a href="/about" className="text-white hover:opacity-80 font-medium">
+          <Link to="/about" className="text-white hover:opacity-80 font-medium">
             About Us
-          </a>
+          </Link>
+
         </nav>
 
         {/* Login Button */}

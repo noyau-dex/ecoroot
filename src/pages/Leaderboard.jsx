@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { getLeaderboardData, getImageByRank } from "../services/leaderboard";
 import Navbar from "../components/navbar"
+import Footer from "../components/footer"
 export default function Leaderboard() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState("all"); // "all" | "clubs"
@@ -143,6 +144,7 @@ export default function Leaderboard() {
         </div>
       </div>
     </div>
+    <Footer/>
     </>
   );
 }

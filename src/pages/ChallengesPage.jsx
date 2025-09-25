@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import ChallengeCard from '../components/ChallengeCard.jsx'
 import { useChallenges } from '../contexts/ChallengesContext.jsx'
 import Navbar from "../components/navbar"
+import Footer from "../components/footer"
 // Lightweight toast system for ephemeral notifications
 function useToasts() {
   const [toasts, setToasts] = useState([])
@@ -486,6 +487,7 @@ function ChallengesPage() {
         ))}
       </div>
     </section>
+    <Footer/>
     </>
   )
 }

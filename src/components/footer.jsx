@@ -45,10 +45,11 @@ function Footer() {
               <h4 className="text-white font-bold text-lg mb-4">Quick Links</h4>
               <ul className="space-y-2">
                 <li><Link to="/" className="text-white/80 hover:text-white transition-colors">Home</Link></li>
-                <li><Link to="/GameSection" className="text-white/80 hover:text-white transition-colors">Games</Link></li>
-                <li><Link to="/Challenges" className="text-white/80 hover:text-white transition-colors">Challenges</Link></li>
+                <li><Link to="/games" className="text-white/80 hover:text-white transition-colors">Games</Link></li>
+                <li><Link to="/challenges" className="text-white/80 hover:text-white transition-colors">Challenges</Link></li>
                 <li><Link to="/leaderboard" className="text-white/80 hover:text-white transition-colors">Leaderboard</Link></li>
-                <li><a href="#" className="text-white/80 hover:text-white transition-colors">Rewards</a></li>
+                <li><Link to="/rewards" className="text-white/80 hover:text-white transition-colors">Rewards</Link></li>
+               
               </ul>
             </div>
 
@@ -56,7 +57,7 @@ function Footer() {
             <div>
               <h4 className="text-white font-bold text-lg mb-4">Support</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-white/80 hover:text-white transition-colors">About Us</a></li>
+                <li><a href="/about" className="text-white/80 hover:text-white transition-colors">About Us</a></li>
                 <li><a href="#" className="text-white/80 hover:text-white transition-colors">Contact</a></li>
                 <li><a href="#" className="text-white/80 hover:text-white transition-colors">Help Center</a></li>
                 <li><a href="#" className="text-white/80 hover:text-white transition-colors">Privacy Policy</a></li>

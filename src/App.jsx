@@ -37,6 +37,7 @@ import Game from "./pages/Game";
 import WasteQuiz from "./pages/WasteQuiz";
 import Rewards from "./pages/Rewards.jsx";
 import Auth from "./pages/Auth.jsx";
+import About from "./pages/About.jsx";
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
       <Route path="/game-quiz" element={<Game />} />
       <Route path="/waste-quiz" element={<WasteQuiz />} />
       <Route path="/rewards" element={<Rewards />} />
+        <Route path="/about" element={<About />} />
     </Routes>
   );
 }

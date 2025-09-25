@@ -5,15 +5,15 @@ export default function GameSection() {
   const games = [
     {
       id: "game-quiz",
-      title: "Eco Knowledge Quiz",
+      title: "Carbon Clash",
       description: "Test your environmental awareness with fun challenges.",
       image: "https://img.icons8.com/color/160/earth-planet.png",
     },
     {
       id: "waste-quiz",
-      title: "Waste Segregation Quiz",
+      title: "Bin It Right",
       description: "Learn to sort waste correctly while having fun!",
-      image: "https://img.icons8.com/color/160/recycle.png",
+      image: "https://media.istockphoto.com/id/962933762/vector/ecology-and-waste-global-eco-friendly-plastic.jpg?s=612x612&w=0&k=20&c=RdbOw__qI_Vc0W8pU0dEiO9--Unfs-iXUEqQOCP-1HE=",
     },
   ];
 
